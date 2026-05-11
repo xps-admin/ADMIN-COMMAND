@@ -1,0 +1,123 @@
+name: Admin Command Cloud Runner
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Cloud operation mode"
+        required: true
+        default: "test-build"
+        type: choice
+        options:
+          - test-build
+          - deploy-preview
+          - deploy-production
+          - supabase-migrate
+          - full-cloud-run
+      command_note:
+        description: "Operator note / command reference"
+        required: false
+        default: "manual cloud run"
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  test-build:
+    name: Test and build Admin Command
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Strategic-Minds/ADMIN-COMMAND
+        uses: actions/checkout@v4
+      - name: Setup Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install dependencies
+        run: npm install
+      - name: Run smoke tests
+        run: npm run test
+      - name: Build Next.js app
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL || 'https://example.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder' }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ vars.SUPABASE_SERVICE_ROLE_KEY || 'placeholder' }}
+          OPENAI_API_KEY: ${{ vars.OPENAI_API_KEY || 'placeholder' }}
+          AI_GATEWAY_API_KEY: ${{ vars.AI_GATEWAY_API_KEY || 'placeholder' }}
+          ORCHESTRATOR_SECRET: ${{ vars.ORCHESTRATOR_SECRET || 'placeholder' }}
+
+  deploy-preview:
+    name: Deploy preview from cloud
+    if: ${{ github.event.inputs.mode == 'deploy-preview' || github.event.inputs.mode == 'full-cloud-run' }}
+    needs: test-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm install
+      - name: Pull Vercel project settings
+        run: npx vercel pull --yes --environment=preview --scope strategic-minds-advisory --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build with Vercel
+        run: npx vercel build --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy preview
+        run: npx vercel deploy --prebuilt --scope strategic-minds-advisory --token=${{ secrets.VERCEL_TOKEN }}
+
+  deploy-production:
+    name: Deploy production from cloud
+    if: ${{ github.event.inputs.mode == 'deploy-production' || github.event.inputs.mode == 'full-cloud-run' }}
+    needs: test-build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm install
+      - name: Pull Vercel production settings
+        run: npx vercel pull --yes --environment=production --scope strategic-minds-advisory --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build with Vercel
+        run: npx vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy production
+        run: npx vercel deploy --prebuilt --prod --scope strategic-minds-advisory --token=${{ secrets.VERCEL_TOKEN }}
+
+  supabase-migrate:
+    name: Run Supabase migration from cloud
+    if: ${{ github.event.inputs.mode == 'supabase-migrate' || github.event.inputs.mode == 'full-cloud-run' }}
+    needs: test-build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Link Supabase project
+        run: supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      - name: Push database migrations
+        run: supabase db push
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+  cloud-run-report:
+    name: Cloud run report
+    needs: [test-build]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report
+        run: |
+          echo "Admin Command Cloud Runner"
+          echo "Mode: ${{ github.event.inputs.mode }}"
+          echo "Note: ${{ github.event.inputs.command_note }}"
+          echo "Repo: Strategic-Minds/ADMIN-COMMAND"
+          echo "Target: admin-command / strategic-minds-advisory"
