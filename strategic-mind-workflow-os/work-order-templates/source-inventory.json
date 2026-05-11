@@ -1,0 +1,8 @@
+{
+  "type": "source-inventory",
+  "mode": "SANDBOX_ONLY",
+  "system_name": "Strategic Mind Workflow OS",
+  "task": "Inventory Drive, GitHub, Vercel, Shopify, Apps Script, workbook, and template sources.",
+  "required_output": ["source_manifest", "could_not_verify", "blockers", "next_action"],
+  "blocked_actions": ["production_deploy", "shopify_live_publish", "main_merge", "secret_write", "email_send", "social_post", "paid_action"]
+}

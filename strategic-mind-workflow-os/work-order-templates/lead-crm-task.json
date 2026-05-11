@@ -1,0 +1,8 @@
+{
+  "type": "lead-crm-task",
+  "mode": "SANDBOX_ONLY",
+  "system_name": "Strategic Mind Workflow OS",
+  "task": "Create lead discovery, CRM mapping, qualification, follow-up draft, and KPI workflow without sending messages.",
+  "required_output": ["lead_source_map", "crm_fields", "qualification_rules", "draft_followups", "kpi_plan"],
+  "blocked_actions": ["email_send", "social_post", "paid_action", "secret_write", "production_deploy", "shopify_live_publish", "main_merge"]
+}

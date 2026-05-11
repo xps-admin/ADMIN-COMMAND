@@ -1,0 +1,8 @@
+{
+  "type": "reverse-engineer-pass",
+  "mode": "SANDBOX_ONLY",
+  "system_name": "Strategic Mind Workflow OS",
+  "task": "Reverse engineer approved public or owned systems into safe reusable workflow, UI, data, and automation patterns.",
+  "required_output": ["component_map", "workflow_map", "data_model", "implementation_pattern"],
+  "blocked_actions": ["production_deploy", "shopify_live_publish", "main_merge", "secret_write", "email_send", "social_post", "paid_action"]
+}

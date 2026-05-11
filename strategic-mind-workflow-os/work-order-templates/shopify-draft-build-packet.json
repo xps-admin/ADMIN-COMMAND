@@ -1,0 +1,8 @@
+{
+  "type": "shopify-draft-build-packet",
+  "mode": "SANDBOX_ONLY",
+  "system_name": "Strategic Mind Workflow OS",
+  "task": "Create Shopify draft/staging build packet with page, section, form, SEO, Flow, claims, rollback, and publish firewall outputs.",
+  "required_output": ["shopify_draft_plan", "section_map", "seo_checklist", "flow_plan", "rollback_plan"],
+  "blocked_actions": ["shopify_live_publish", "live_theme_edit", "production_deploy", "main_merge", "secret_write", "email_send", "social_post", "paid_action"]
+}
