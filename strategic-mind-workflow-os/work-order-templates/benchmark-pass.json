@@ -1,0 +1,8 @@
+{
+  "type": "benchmark-pass",
+  "mode": "SANDBOX_ONLY",
+  "system_name": "Strategic Mind Workflow OS",
+  "task": "Use benchmark workbook logic to compare proven systems and extract reusable patterns.",
+  "required_output": ["benchmark_matrix", "top_patterns", "risks", "source_citations"],
+  "blocked_actions": ["production_deploy", "shopify_live_publish", "main_merge", "secret_write", "email_send", "social_post", "paid_action"]
+}
