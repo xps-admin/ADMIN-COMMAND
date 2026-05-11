@@ -1,0 +1,8 @@
+{
+  "type": "refactor-pass",
+  "mode": "SANDBOX_ONLY",
+  "system_name": "Strategic Mind Workflow OS",
+  "task": "Refactor source assets into one normalized Strategic Mind Workflow OS template structure without renaming or changing workflow plans.",
+  "required_output": ["merge_map", "archive_map", "source_of_truth", "blockers", "next_patch"],
+  "blocked_actions": ["production_deploy", "shopify_live_publish", "main_merge", "secret_write", "email_send", "social_post", "paid_action"]
+}
