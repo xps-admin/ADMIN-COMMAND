@@ -1,5 +1,12 @@
 const phases = ['Source Inventory','Benchmark','Reverse Engineer','Refactor','Build Packet','Shopify Draft Build','Frontend/Backend Build','Media + Lead Engine','QA Firewall','Approval','Launch','Optimization','Template Extraction','Recursive Rebuild'];
 const workOrders = ['source-inventory','benchmark-pass','reverse-engineer-pass','refactor-pass','shopify-draft-build-packet','content-media-task','lead-crm-task','qa-firewall-task'];
+const statusCards = [
+  ['ADMIN-COMMAND PR #1','Draft / unmerged / review required'],
+  ['Template PR #2','Draft / unmerged / recursive runner scaffold'],
+  ['Queue templates', `${workOrders.length} sandbox work-order templates`],
+  ['Blocked actions','Deploy, Shopify live publish, main merge, secrets, send, post, paid'],
+  ['Vercel status','Could not verify from dashboard runtime yet']
+];
 
 export default function StrategicMindWorkflowOSPage() {
   return (
@@ -14,6 +21,13 @@ export default function StrategicMindWorkflowOSPage() {
         <div className="card"><h3>Template Repo</h3><p>Strategic Mind Workflow OS master template repo remains in draft PR review until approved.</p></div>
         <div className="card"><h3>Admin Command</h3><p>Operator dashboard for issue conversion, queue sync, recursive validation, and workflow summary output.</p></div>
         <div className="card"><h3>Scheduler</h3><p>GitHub Actions and Apps Script coordinate safe recursive checks and queue processing.</p></div>
+      </section>
+      <section className="section panel">
+        <p className="kicker">Review status</p>
+        <h2>Operational status cards</h2>
+        <div className="grid grid-4" style={{ marginTop: 18 }}>
+          {statusCards.map(([title, text]) => <div className="card" key={title}><h3>{title}</h3><p>{text}</p></div>)}
+        </div>
       </section>
       <section className="section grid grid-2">
         <div className="panel"><h2>Canonical workflow</h2>{phases.map((phase, index) => <div className="toggle-row" key={phase}><span>{String(index + 1).padStart(2, '0')} — {phase}</span><span className="pill">GATED</span></div>)}</div>
