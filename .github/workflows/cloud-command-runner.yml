@@ -19,6 +19,9 @@ on:
         required: false
         default: "manual cloud run"
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 permissions:
   contents: read
   deployments: write
@@ -34,7 +37,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: npm
       - name: Install dependencies
         run: npm install
       - name: Run smoke tests
@@ -59,7 +61,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: npm
       - run: npm install
       - name: Pull Vercel project settings
         run: npx vercel pull --yes --environment=preview --scope strategic-minds-advisory --token=${{ secrets.VERCEL_TOKEN }}
@@ -79,7 +80,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: npm
       - run: npm install
       - name: Pull Vercel production settings
         run: npx vercel pull --yes --environment=production --scope strategic-minds-advisory --token=${{ secrets.VERCEL_TOKEN }}
