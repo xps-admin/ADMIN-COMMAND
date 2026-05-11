@@ -1,0 +1,8 @@
+{
+  "type": "content-media-task",
+  "mode": "SANDBOX_ONLY",
+  "system_name": "Strategic Mind Workflow OS",
+  "task": "Create draft-only content, image, video, audio, music, captions, and posting plans with approval gates.",
+  "required_output": ["content_brief", "asset_prompts", "posting_plan", "approval_checklist"],
+  "blocked_actions": ["publish_live", "email_send", "social_post", "paid_action", "secret_write", "production_deploy", "main_merge"]
+}
