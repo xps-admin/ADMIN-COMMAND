@@ -1,0 +1,8 @@
+{
+  "type": "qa-firewall-task",
+  "mode": "SANDBOX_ONLY",
+  "system_name": "Strategic Mind Workflow OS",
+  "task": "Run QA/firewall review across source, benchmark, Shopify, code, secrets, claims, approval, and release gates.",
+  "required_output": ["qa_status", "blocked_actions", "risk_register", "approval_required", "next_fix"],
+  "blocked_actions": ["production_deploy", "shopify_live_publish", "main_merge", "secret_write", "email_send", "social_post", "paid_action"]
+}
