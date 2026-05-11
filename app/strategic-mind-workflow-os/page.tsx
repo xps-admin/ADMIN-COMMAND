@@ -7,6 +7,11 @@ const statusCards = [
   ['Blocked actions','Deploy, Shopify live publish, main merge, secrets, send, post, paid'],
   ['Vercel status','Could not verify from dashboard runtime yet']
 ];
+const apiCards = [
+  ['GitHub status API','/api/strategic-mind-workflow-os/github-status','Reads ADMIN-COMMAND PR #1 and template PR #2 status.'],
+  ['Queue status API','/api/strategic-mind-workflow-os/queue-status','Reports available work-order templates and queue connection status.'],
+  ['Vercel status API','/api/strategic-mind-workflow-os/vercel-status','Safe placeholder until Vercel token is added outside code.']
+];
 
 export default function StrategicMindWorkflowOSPage() {
   return (
@@ -27,6 +32,13 @@ export default function StrategicMindWorkflowOSPage() {
         <h2>Operational status cards</h2>
         <div className="grid grid-4" style={{ marginTop: 18 }}>
           {statusCards.map(([title, text]) => <div className="card" key={title}><h3>{title}</h3><p>{text}</p></div>)}
+        </div>
+      </section>
+      <section className="section panel">
+        <p className="kicker">Connected APIs</p>
+        <h2>Dashboard data endpoints</h2>
+        <div className="grid grid-4" style={{ marginTop: 18 }}>
+          {apiCards.map(([title, href, text]) => <a className="card" href={href} key={title}><h3>{title}</h3><p>{text}</p><span className="pill">OPEN</span></a>)}
         </div>
       </section>
       <section className="section grid grid-2">
