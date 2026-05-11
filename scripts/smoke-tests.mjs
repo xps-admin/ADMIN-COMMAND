@@ -1,39 +1,59 @@
 import fs from 'node:fs';
-import path from 'node:path';
 
-const root = process.cwd();
-const required = [
-  'app/strategic-mind-workflow-os/page.tsx',
-  'strategic-mind-workflow-os/scripts/issue-to-runner-queue.mjs',
-  'strategic-mind-workflow-os/scripts/write-summary.mjs',
-  'strategic-mind-workflow-os/work-order-templates/source-inventory.json',
-  'strategic-mind-workflow-os/work-order-templates/benchmark-pass.json',
-  'strategic-mind-workflow-os/work-order-templates/reverse-engineer-pass.json',
-  'strategic-mind-workflow-os/work-order-templates/refactor-pass.json',
-  'strategic-mind-workflow-os/work-order-templates/shopify-draft-build-packet.json',
-  'strategic-mind-workflow-os/work-order-templates/content-media-task.json',
-  'strategic-mind-workflow-os/work-order-templates/lead-crm-task.json',
-  'strategic-mind-workflow-os/work-order-templates/qa-firewall-task.json'
+const requiredFiles = [
+  'package.json',
+  'next.config.mjs',
+  'tsconfig.json',
+  'app/layout.tsx',
+  'app/page.tsx',
+  'app/dashboard/page.tsx',
+  'app/[section]/page.tsx',
+  'app/api/chat/route.ts',
+  'app/api/bridge/route.ts',
+  'components/AdminShell.tsx',
+  'components/ChatPanel.tsx',
+  'lib/supabase/client.ts',
+  'lib/supabase/server.ts',
+  'public/manifest.webmanifest',
+  'public/icon.svg',
+  'public/sw.js',
+  'supabase/migrations/0001_admin_command_schema.sql',
+  'apps-script/AdminCommandDriveBridge.gs',
+  'RUNNER_QUEUE/README.md',
+  '.env.example',
 ];
 
-for (const rel of required) {
-  if (!fs.existsSync(path.join(root, rel))) {
-    throw new Error(`Missing required file: ${rel}`);
-  }
+const requiredRouteNames = [
+  'dashboard', 'vault', 'systems', 'workflow', 'sandbox', 'quarantine', 'logs', 'rollback',
+  'content', 'lead-gen', 'benchmark', 'reverse-engineering', 'capabilities', 'github', 'drive',
+  'vercel', 'supabase', 'shopify', 'chat', 'tools', 'templates', 'settings',
+];
+
+const failures = [];
+
+for (const file of requiredFiles) {
+  if (!fs.existsSync(file)) failures.push(`Missing required file: ${file}`);
 }
 
-const templateDir = path.join(root, 'strategic-mind-workflow-os', 'work-order-templates');
-for (const file of fs.readdirSync(templateDir).filter((name) => name.endsWith('.json'))) {
-  const full = path.join(templateDir, file);
-  const parsed = JSON.parse(fs.readFileSync(full, 'utf8'));
-  if (parsed.system_name !== 'Strategic Mind Workflow OS') throw new Error(`${file} has invalid system_name`);
-  if (parsed.mode !== 'SANDBOX_ONLY') throw new Error(`${file} is not sandbox-only`);
-  const blocked = parsed.blocked_actions || [];
-  for (const action of ['production_deploy','shopify_live_publish','main_merge','secret_write','email_send','social_post','paid_action']) {
-    if (!blocked.includes(action) && !(file === 'content-media-task.json' && action === 'shopify_live_publish')) {
-      throw new Error(`${file} missing blocked action: ${action}`);
-    }
-  }
+const shell = fs.existsSync('components/AdminShell.tsx') ? fs.readFileSync('components/AdminShell.tsx', 'utf8') : '';
+for (const route of requiredRouteNames) {
+  if (!shell.includes(route)) failures.push(`Missing route in AdminShell: ${route}`);
 }
 
-console.log('Strategic Mind Workflow OS Admin Command smoke tests passed.');
+const migration = fs.existsSync('supabase/migrations/0001_admin_command_schema.sql') ? fs.readFileSync('supabase/migrations/0001_admin_command_schema.sql', 'utf8') : '';
+for (const table of ['systems', 'commands', 'runner_jobs', 'audit_logs', 'rollback_snapshots', 'quarantine_items', 'vault_references', 'lead_campaigns', 'benchmark_targets', 'reverse_engineering_runs']) {
+  if (!migration.includes(`create table if not exists ${table}`)) failures.push(`Missing table in migration: ${table}`);
+}
+
+const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+if (!pkg.scripts?.build?.includes('next build')) failures.push('package.json build script must use next build');
+if (!pkg.dependencies?.next) failures.push('Next.js dependency missing');
+if (!pkg.dependencies?.['@supabase/supabase-js']) failures.push('Supabase dependency missing');
+if (!pkg.dependencies?.ai) failures.push('Vercel AI SDK dependency missing');
+
+if (failures.length) {
+  console.error(failures.join('\n'));
+  process.exit(1);
+}
+
+console.log('Admin Command smoke tests passed.');

@@ -1,17 +1,37 @@
 name: Admin Command CI
 
 on:
+  push:
+    branches: [main]
   pull_request:
-  workflow_dispatch:
+    branches: [main]
 
 jobs:
-  test-and-build:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-      - run: npm install
-      - run: npm run test
-      - run: npm run build
+      - name: Checkout repository without JavaScript actions
+        run: |
+          git init .
+          git remote add origin https://github.com/${{ github.repository }}.git
+          git fetch --depth=1 origin ${{ github.sha }}
+          git checkout FETCH_HEAD
+      - name: Install Node 24 without setup-node action
+        run: |
+          curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          node --version
+          npm --version
+      - name: Install
+        run: npm install
+      - name: Smoke tests
+        run: npm run test
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+          SUPABASE_SERVICE_ROLE_KEY: placeholder
+          OPENAI_API_KEY: placeholder
+          AI_GATEWAY_API_KEY: placeholder
+          ORCHESTRATOR_SECRET: placeholder
