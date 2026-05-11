@@ -1,0 +1,180 @@
+{
+  "version": "1.0.0",
+  "owner": "Strategic-Minds",
+  "repo": "ADMIN-COMMAND",
+  "projectUrl": "https://github.com/orgs/Strategic-Minds/projects/1/settings",
+  "goal": "Bring Admin Command to 100% pre-launch readiness using cloud-only GPT/GitHub/Vercel/Supabase automation.",
+  "rules": {
+    "internalBuildMustNotBlockOnOptionalEnv": true,
+    "externalPostingMustBlockWithoutProviderEnv": true,
+    "noRawSecretsInRepoOrBrowser": true,
+    "quarantineInsteadOfPermanentDriveDelete": true,
+    "approvalRequiredForProductionImpactingActions": true,
+    "dryRunDefault": true,
+    "auditLogRequired": true,
+    "rollbackReferenceRequired": true
+  },
+  "phases": [
+    {
+      "id": "P01",
+      "name": "Deployment Green",
+      "status": "open",
+      "tasks": [
+        "Run fresh Admin Command CI on latest main",
+        "Run fresh Vercel deployment from latest main",
+        "Verify /dashboard returns 200",
+        "Verify /api/health returns JSON",
+        "Verify /api/gpt-automation-bridge GET returns action list"
+      ],
+      "acceptance": "Vercel latest production deployment is READY and core routes respond."
+    },
+    {
+      "id": "P02",
+      "name": "Supabase Live Schema",
+      "status": "open",
+      "tasks": [
+        "Confirm Supabase env in Vercel/GitHub Actions",
+        "Run supabase db push from cloud workflow",
+        "Verify required tables exist",
+        "Create a test command row",
+        "Create a test audit log row"
+      ],
+      "acceptance": "Command queue and audit log writes succeed against Supabase."
+    },
+    {
+      "id": "P03",
+      "name": "GPT Bridge Operational",
+      "status": "open",
+      "tasks": [
+        "Confirm ORCHESTRATOR_SECRET installed",
+        "Test unauthorized bridge request returns 401",
+        "Test approved dry run returns dry-run payload",
+        "Test bridge writes audit logs when Supabase is present",
+        "Test github.workflow_dispatch dry run and execution after approval"
+      ],
+      "acceptance": "Bridge can safely queue/dry-run and execute internal GitHub workflow dispatch."
+    },
+    {
+      "id": "P04",
+      "name": "Vercel Automation Operational",
+      "status": "open",
+      "tasks": [
+        "Confirm VERCEL_TOKEN or VERCEL_DEPLOY_HOOK_URL",
+        "Test vercel.workflow_dispatch",
+        "Test vercel.deploy_hook if hook exists",
+        "Verify deployment appears in Vercel",
+        "Verify health route after deployment"
+      ],
+      "acceptance": "Admin Command can trigger its own cloud deployment path."
+    },
+    {
+      "id": "P05",
+      "name": "GitHub Project Integration",
+      "status": "open",
+      "tasks": [
+        "Create GitHub issues from this backlog",
+        "Apply labels: admin-command, phase, prelaunch, automation",
+        "Add issues to Strategic-Minds Project 1 if API is available",
+        "Document manual project fallback if API is unavailable"
+      ],
+      "acceptance": "Every remaining phase is represented as an issue/project item."
+    },
+    {
+      "id": "P06",
+      "name": "Apps Script Live Bridge",
+      "status": "open",
+      "tasks": [
+        "Deploy apps-script/AdminCommandDriveBridge.gs as Web App",
+        "Set APPS_SCRIPT_WEB_APP_URL",
+        "Test drive.quarantine dry run",
+        "Test delete_request routes to quarantine",
+        "Verify Drive audit log"
+      ],
+      "acceptance": "Drive bridge responds and logs quarantine actions."
+    },
+    {
+      "id": "P07",
+      "name": "Shopify Publish Bridge",
+      "status": "open",
+      "tasks": [
+        "Set SHOPIFY_SHOP_DOMAIN",
+        "Set SHOPIFY_ADMIN_TOKEN",
+        "Test product lookup manually before publish",
+        "Test approved dry run",
+        "Publish only after explicit operator approval"
+      ],
+      "acceptance": "Shopify publish action is operational and gated."
+    },
+    {
+      "id": "P08",
+      "name": "Social Email SMS Relays",
+      "status": "open",
+      "tasks": [
+        "Choose social relay provider",
+        "Set SOCIAL_WEBHOOK_URL",
+        "Choose email relay provider",
+        "Set EMAIL_WEBHOOK_URL",
+        "Choose compliant SMS provider",
+        "Set SMS_WEBHOOK_URL",
+        "Test each as dry run before live action"
+      ],
+      "acceptance": "External posting/sending actions are configured and compliance-gated."
+    },
+    {
+      "id": "P09",
+      "name": "UI Controls Wired To Bridge",
+      "status": "open",
+      "tasks": [
+        "Add action forms for bridge actions",
+        "Add vault provider status cards",
+        "Add command queue screen",
+        "Add audit log screen",
+        "Add approval gate screen",
+        "Add rollback/quarantine action panels"
+      ],
+      "acceptance": "Operator can control bridge actions from the Admin Command UI."
+    },
+    {
+      "id": "P10",
+      "name": "Autonomous Builder Loop",
+      "status": "open",
+      "tasks": [
+        "Add autonomous builder workflow",
+        "Add backlog parser script",
+        "Add self-reflection report generator",
+        "Add issue generation mode",
+        "Add safe patch mode",
+        "Add validation iteration mode"
+      ],
+      "acceptance": "Cloud runner can read backlog, validate system, create issues/reports, and propose patches."
+    },
+    {
+      "id": "P11",
+      "name": "Production Hardening",
+      "status": "open",
+      "tasks": [
+        "Add auth/sign-in",
+        "Add RLS policies",
+        "Add role model",
+        "Add rate limiting",
+        "Add error logging provider",
+        "Add provider risk gates"
+      ],
+      "acceptance": "Production access and data protection controls are in place."
+    },
+    {
+      "id": "P12",
+      "name": "Launch Readiness",
+      "status": "open",
+      "tasks": [
+        "Run final smoke tests",
+        "Run final route checks",
+        "Run final env check",
+        "Run final provider check",
+        "Create launch note",
+        "Mark 100% prelaunch ready"
+      ],
+      "acceptance": "Admin Command is validated as prelaunch ready."
+    }
+  ]
+}
